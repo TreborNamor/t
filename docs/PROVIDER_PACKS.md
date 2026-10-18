@@ -63,12 +63,12 @@ triggers TFlix's automatic fallback to the next provider:
    lulustream/luluvdo's `tnmr.org` CDN) 403 every request, including ones
    with no Referer at all.
 
-2. **`{ embedUrl, providerName? }`** — a URL to iframe as-is instead of a raw
+2. **`{ embedUrl, providerName?, sandbox? }`** — a URL to iframe as-is instead of a raw
    stream. Use this when raw extraction would mean chasing an ad-injected or
    frequently-changing wrapper chain (see the Stardima case study below) —
    trading native player features for reliability. `embedUrl` bypasses
    TFlix's HLS-playlist rewriting proxy entirely, since it's an HTML page,
-   not a playlist.
+   not a playlist. The iframe is sandboxed by default. Set `sandbox: false` only when a trusted provider explicitly rejects sandboxed embedding; this removes iframe isolation and can allow provider pop-ups or navigation.
 
 3. **`{ needsConfirmation: true, candidates: [{ id, label, year? }], providerName? }`**
    — the title search was ambiguous and you don't want to guess. TFlix shows
