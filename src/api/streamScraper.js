@@ -5,7 +5,7 @@
  * scraping happens there, outside the webview, because every direct-stream
  * provider we've tested either omits CORS headers or rejects requests that
  * carry a browser `Origin` header (unavoidable on any cross-origin fetch/XHR
- * made from here) — see service/hlsRelay.js for the verified per-provider
+ * made from here) â€” see service/hlsRelay.js for the verified per-provider
  * failure modes this works around.
  */
 
@@ -15,7 +15,7 @@ const RELAY_BASE = 'http://127.0.0.1:47993';
 const RELAY_HEALTH_TIMEOUT_MS = 2000;
 // Some provider packs' resolve() chains legitimately take a while (e.g.
 // Stardima's TV episode lookup can walk every season of a long-running show
-// — up to ~13 sequential requests, ~4.5s measured live).
+// â€” up to ~13 sequential requests, ~4.5s measured live).
 // 15s was cutting that off mid-chain with a client-side abort, discarding
 // the relay's real (and often successful) answer.
 const RESOLVE_TIMEOUT_MS = 45000;
@@ -30,7 +30,7 @@ async function fetchWithTimeout(url, timeoutMs) {
   }
 }
 
-// Only a confirmed-reachable relay is cached — a Node serviceFile process
+// Only a confirmed-reachable relay is cached â€” a Node serviceFile process
 // can still be starting up when the webview finishes loading and makes its
 // first request (they start independently), so a failure here doesn't mean
 // the relay is actually dead; it may just not be listening *yet*. Caching
@@ -52,20 +52,20 @@ export async function isRelayAvailable() {
 
 /**
  * Resolves a provider's stream for the requested media via the local relay.
- * Provider rotation on failure is handled by PlayerModal (getNextFallbackProvider) —
+ * Provider rotation on failure is handled by PlayerModal (getNextFallbackProvider) â€”
  * this must NOT silently substitute a different provider's stream on failure.
  *
  * Returns one of three shapes depending on what the provider pack's resolve()
  * returned:
- *   - { streamUrl, subtitles, ... }      — play natively
- *   - { embedUrl, ... }                  — iframe the resolved URL
- *   - { needsConfirmation, candidates }  — ambiguous title match; caller must
+ *   - { streamUrl, subtitles, ... }      â€” play natively
+ *   - { embedUrl, ... }                  â€” iframe the resolved URL
+ *   - { needsConfirmation, candidates }  â€” ambiguous title match; caller must
  *     show a picker, then re-call with a 4th `confirmedShowId` argument
  *     (also cache it via storage.setConfirmedShowId so future episodes of
  *     the same show skip the prompt).
  *
  * `forceConfirm`: set true to make a `fuzzyMatch` provider (see getProviders)
- * re-surface its picker even for a single/cached match — the "wrong match?"
+ * re-surface its picker even for a single/cached match â€” the "wrong match?"
  * control uses this to let the user correct (or explicitly ratify) an
  * auto-accepted match after the fact, without asking on every new title.
  */
@@ -78,7 +78,7 @@ export async function resolveDirectStream(providerId, media, season = 1, episode
   const isTv = media.media_type === 'tv' || media.mediaType === 'tv';
   // media.title may carry a "<name> - S<n>E<n>" display suffix appended by
   // episode-card click handlers (DetailsModal/EpisodeDrawer) for the player
-  // header — strip it back off before using it as a provider search query.
+  // header â€” strip it back off before using it as a provider search query.
   const rawTitle = media.title || media.name || '';
   const title = rawTitle.replace(/\s*-\s*S\d+E\d+\s*$/i, '');
   const year = (media.release_date || media.first_air_date || '').split('-')[0] || '';
@@ -108,7 +108,7 @@ export async function resolveDirectStream(providerId, media, season = 1, episode
     return { needsConfirmation: true, candidates: data.candidates || [], providerId, providerName: data.providerName };
   }
   if (data.embedUrl) {
-    return { embedUrl: data.embedUrl, providerId, providerName: data.providerName };
+    return { embedUrl: data.embedUrl, providerId, providerName: data.providerName, sandbox: data.sandbox !== false };
   }
   if (!data.streamUrl) {
     throw new Error(`${providerId} did not return a stream URL`);
@@ -118,12 +118,12 @@ export async function resolveDirectStream(providerId, media, season = 1, episode
 
 /**
  * Episode-availability badges (see docs/PROVIDER_PACKS.md's "Optional
- * capabilities"). Deliberately requires an already-*confirmed* showId —
- * never resolves one itself — so a badge can only ever appear for an
+ * capabilities"). Deliberately requires an already-*confirmed* showId â€”
+ * never resolves one itself â€” so a badge can only ever appear for an
  * identity the user (or a high-confidence single-candidate match) actually
  * confirmed, never a raw unconfirmed guess. Returns null (not an error) for
  * every case where badges simply don't apply here: relay down, provider
- * doesn't support it, or show not yet confirmed — callers should treat null
+ * doesn't support it, or show not yet confirmed â€” callers should treat null
  * as "don't show badges," not surface it as a failure.
  */
 export async function listAvailableEpisodes(providerId, tmdbId, season = null) {
@@ -150,11 +150,11 @@ export async function listAvailableEpisodes(providerId, tmdbId, season = null) {
 }
 
 /**
- * Resolves a native-catalog provider's stream for an already-chosen item —
+ * Resolves a native-catalog provider's stream for an already-chosen item â€”
  * see docs/PROVIDER_PACKS.md's "Native catalogs" section. Bypasses all
  * TMDB-anchored matching: `nativeId` is the pack's own id for the movie or
  * episode, straight from listCatalog/search/listNativeEpisodes. Distinct
- * from resolveDirectStream — never called with a tmdbId/title, never caches
+ * from resolveDirectStream â€” never called with a tmdbId/title, never caches
  * via storage.setConfirmedShowId (the browse-screen selection already *is*
  * the confirmation), and never subject to fallback-provider rotation
  * (PlayerModal's nativeMode disables that for this flow entirely).
@@ -181,7 +181,7 @@ export async function resolveNativeStream(providerId, nativeId, isTv, season = 1
   }
 
   if (data.embedUrl) {
-    return { embedUrl: data.embedUrl, providerId, providerName: data.providerName };
+    return { embedUrl: data.embedUrl, providerId, providerName: data.providerName, sandbox: data.sandbox !== false };
   }
   if (!data.streamUrl) {
     throw new Error(`${providerId} did not return a stream URL`);
@@ -190,7 +190,7 @@ export async function resolveNativeStream(providerId, nativeId, isTv, season = 1
 }
 
 /**
- * Native-catalog browse/search/season/episode-listing thin clients — see
+ * Native-catalog browse/search/season/episode-listing thin clients â€” see
  * docs/PROVIDER_PACKS.md's "Native catalogs" section and the relay's
  * /browse, /search-native, /seasons, /native-episodes endpoints.
  */
@@ -234,3 +234,4 @@ export async function listNativeEpisodes(providerId, nativeId, seasonId = null) 
   if (!res.ok) throw new Error(data.error || `${providerId} episode listing failed`);
   return { episodes: data.episodes || [] };
 }
+
