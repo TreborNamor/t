@@ -1,7 +1,7 @@
 {
   "name": "@zyrecx/tflix",
-  "appName": "TFlix",
-  "version": "2.0.5",
+  "appName": "TFlix (Policy Fix)",
+  "version": "2.0.5-referrer.1",
   "description": "TFlix is a 10-foot streaming web app for Samsung Smart TVs running TizenBrew, featuring TMDB discovery and multi-embed streaming.",
   "packageType": "app",
   "appPath": "dist/index.html",
@@ -28,12 +28,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Zyrecx/TFlix"
+    "url": "https://github.com/TreborNamor/t"
   },
   "bugs": {
     "url": "https://github.com/Zyrecx/TFlix/issues"
   },
-  "homepage": "https://github.com/Zyrecx/TFlix#readme",
+  "homepage": "https://github.com/TreborNamor/t#readme",
   "keywords": [
     "tizenbrew",
     "tizen",

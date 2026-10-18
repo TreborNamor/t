@@ -527,6 +527,7 @@ export class PlayerModal {
       <iframe 
         id="player-iframe"
         class="player-iframe"
+        referrerpolicy="origin"
         src="${embedUrl}"
         tabindex="-1"
         allowfullscreen="true"
