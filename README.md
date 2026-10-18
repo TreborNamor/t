@@ -1,12 +1,12 @@
 # TFlix popup blocking fix
 
-This fork of [Zyrecx/TFlix](https://github.com/Zyrecx/TFlix) sets the player iframe to `referrerpolicy="origin"` and sandboxes embedded players to block pop-up windows and modal dialogs while preserving playback permissions.
+This fork of [Zyrecx/TFlix](https://github.com/Zyrecx/TFlix) sets the player iframe to `referrerpolicy="origin"` and sandboxes embedded players by default. Providers that explicitly require an unsandboxed frame can opt out through their resolver result; those providers may open pop-ups or navigate away.
 
 ## Install on the TV
 
 1. Open TizenBrew and choose Module Manager, then Add GitHub Module.
 2. Enter **TreborNamor/t**. Enter only this short repository name, without `https://github.com/`.
-3. Restart TizenBrew, then launch **TFlix (Popup Fix)**, version **2.0.5-popup.1**.
+3. Restart TizenBrew, then launch **TFlix (Popup Fix)**, version **2.0.5-popup.2**.
 4. Use your existing provider URLs. Your private provider configuration is not included in this repository.
 
 The `dist/` files are committed so TizenBrew can load this GitHub module directly. The provider server still serves your own definitions separately.
