@@ -102,7 +102,7 @@ export class PlayerModal {
           }
           this.playerEl = document.createElement('div');
           this.playerEl.className = 'player-screen';
-          this.renderActiveEmbedPlayer('', resolved.embedUrl);
+          this.renderActiveEmbedPlayer('', resolved.embedUrl, resolved.sandbox !== false);
           return;
         }
 
@@ -463,7 +463,7 @@ export class PlayerModal {
     });
   }
 
-  renderActiveEmbedPlayer(fallbackReason = '', overrideUrl = null) {
+  renderActiveEmbedPlayer(fallbackReason = '', overrideUrl = null, sandboxOverride = null) {
     const isTv = this.media.media_type === 'tv' || this.media.mediaType === 'tv';
     const season = this.media.season || 1;
     const episode = this.media.episode || 1;
@@ -487,6 +487,10 @@ export class PlayerModal {
     // of a raw stream â€” the URL is already final, skip the {id} templating
     // that getEmbedUrl() does for classic embed-type providers.
     const embedUrl = overrideUrl || getEmbedUrl(this.currentProviderId, isTv ? 'tv' : 'movie', this.media.id, season, episode, startAt);
+    const configuredProvider = getProviderById(this.currentProviderId);
+    const sandboxEnabled = sandboxOverride === null
+      ? !(configuredProvider && configuredProvider.sandbox === false)
+      : sandboxOverride;
 
     this.hasPlaybackStarted = false;
     clearTimeout(this.embedTimeoutTimer);
@@ -528,7 +532,7 @@ export class PlayerModal {
         id="player-iframe"
         class="player-iframe"
         referrerpolicy="origin"
-        sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"
+        ${sandboxEnabled ? 'sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"' : ''}
         src="${embedUrl}"
         tabindex="-1"
         allowfullscreen="true"
