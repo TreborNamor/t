@@ -1,31 +1,31 @@
 /**
  * TFlix local HLS relay + provider-pack pairing server.
  *
- * Runs as a TizenBrew `serviceFile` — a plain Node.js process outside the
+ * Runs as a TizenBrew `serviceFile` â€” a plain Node.js process outside the
  * webview's browser sandbox. Browser `fetch`/XHR always attaches an `Origin`
  * header on cross-origin requests, and several direct-stream provider APIs
  * either omit CORS headers entirely or actively reject requests that carry
  * any `Origin` header. Node's http/https client sends neither, so requests
  * made here succeed where the webview's would not.
  *
- * IMPORTANT — this file must stay a single, self-contained CommonJS script.
+ * IMPORTANT â€” this file must stay a single, self-contained CommonJS script.
  * TizenBrew's serviceLauncher.js does NOT run this as a normal Node module:
  * it fetches only this one file's raw text from jsDelivr and executes it
  * with `vm.runInContext(script, sandbox)` (see
  * TizenBrew/service-nextgen/service/utils/serviceLauncher.js). That means:
- *   - No `import`/`export` — `vm.runInContext` compiles a classic script,
+ *   - No `import`/`export` â€” `vm.runInContext` compiles a classic script,
  *     not a module; top-level `import` is a SyntaxError there.
- *   - No dynamic `import()` either — it throws "A dynamic import callback
+ *   - No dynamic `import()` either â€” it throws "A dynamic import callback
  *     was not specified" unless the host passes `importModuleDynamically`,
  *     which TizenBrew's launcher does not. Provider-pack files are loaded
  *     with `require()` + manual `require.cache` invalidation instead (see
  *     loadCommunityProviders below).
- *   - No `require('./lib/whatever.js')` to sibling files — the `require`
+ *   - No `require('./lib/whatever.js')` to sibling files â€” the `require`
  *     the sandbox exposes is TizenBrew's own, closure-bound to *its*
  *     install directory, not this file's (which doesn't exist on disk in
- *     the first place — only this one file's text was ever fetched). Any
+ *     the first place â€” only this one file's text was ever fetched). Any
  *     helper code has to live in this file, not a separate module.
- *   - No `__dirname`/`__filename` — those are only injected by Node's
+ *   - No `__dirname`/`__filename` â€” those are only injected by Node's
  *     normal CommonJS module wrapper, which `vm.runInContext` bypasses.
  *   - Confirmed live on-device: the sandbox's `process.version` is v12.4.0
  *     (Tizen's bundled Node), so ES2019-ish syntax (async/await, object
@@ -38,13 +38,13 @@
  * the pairing flow (see loadCommunityProviders/installPack below). This
  * repo ships with none built in; all direct providers come from a provider
  * pack the user installs (see docs/PROVIDER_PACKS.md). Each provider
- * exports (via `module.exports`, not `export default` — see the note on
+ * exports (via `module.exports`, not `export default` â€” see the note on
  * the sandbox above) { id, name, description, resolve(ctx, http) }.
  *
  * This server binds to all interfaces (not just loopback) so the pairing
  * page can be reached from a phone on the same wifi. Config-mutating actions
  * (installing a provider pack) are gated behind a single-use pairing code
- * shown only on the TV screen — see the pairing section below for that
+ * shown only on the TV screen â€” see the pairing section below for that
  * boundary.
  */
 
@@ -60,7 +60,7 @@ var URL = require('url').URL;
 
 var PORT = 47993;
 // Installed provider packs must live outside the package's own install
-// directory — TizenBrew appears to serve npm modules from a location that
+// directory â€” TizenBrew appears to serve npm modules from a location that
 // isn't writable, so writing here (as an earlier version did) threw
 // synchronously during startup and silently killed the whole relay before
 // server.listen() ever ran. os.tmpdir() is always writable.
@@ -69,14 +69,14 @@ var COMMUNITY_DIR = path.join(DATA_DIR, 'providers', 'community');
 var PACK_CONFIG_PATH = path.join(DATA_DIR, 'data', 'providerPack.json');
 
 // ---------------------------------------------------------------------------
-// HTTP client for provider plugins — plain Node http/https, no browser
+// HTTP client for provider plugins â€” plain Node http/https, no browser
 // `Origin` header is ever attached, which is the whole reason this exists on
 // the serviceFile side rather than in the webview.
 // ---------------------------------------------------------------------------
 
 var DESKTOP_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
 
-// `opts` is either a plain headers map (legacy call shape — every existing
+// `opts` is either a plain headers map (legacy call shape â€” every existing
 // provider file and fetchJson/fetchText call it this way) or a structured
 // { method, headers, body } object for a non-GET request. Discriminated by
 // presence of method/body/headers keys rather than a separate parameter, so
@@ -122,14 +122,14 @@ function fetchRaw(targetUrl, opts, redirects) {
   });
 }
 
-// Used only by /hls. Unlike fetchRaw (which always buffers the full body —
+// Used only by /hls. Unlike fetchRaw (which always buffers the full body â€”
 // needed for JSON/HTML/playlist callers that must inspect the whole
 // response), this pipes a non-playlist upstream response straight through
 // to the client as bytes arrive, and forwards the client's Range header.
 // fetchRaw's full-buffer-then-respond behavior was fine for HLS segments
 // (small) but for a large direct-file provider response (e.g. a
 // progressive-mp4 native-catalog pack) it meant zero bytes reached the
-// player until the *entire* file had downloaded server-side — measured at
+// player until the *entire* file had downloaded server-side â€” measured at
 // ~38s for a 130MB file, well past VideoPlayer.js's 15s stream-timeout
 // watchdog, which then fired an incorrect "Timeout (Server slow/offline)"
 // fallback on a stream that was actually fine, just not yet fully buffered.
@@ -210,7 +210,7 @@ async function fetchText(url, headers) {
   return r.body.toString('utf-8');
 }
 
-// Passed as the second argument to every provider's resolve(ctx, http) — the
+// Passed as the second argument to every provider's resolve(ctx, http) â€” the
 // one stable, documented surface a pack author can depend on.
 var providerHttp = { fetchRaw: fetchRaw, fetchJson: fetchJson, fetchText: fetchText };
 
@@ -236,7 +236,7 @@ function generatePairingCode() {
 
 function startPairing(kind) {
   if (kind === undefined) kind = 'provider_pack';
-  // Clear any previous outstanding codes — only one pairing session at a time.
+  // Clear any previous outstanding codes â€” only one pairing session at a time.
   pairingCodes.clear();
   var code = generatePairingCode();
   pairingCodes.set(code, { expiresAt: Date.now() + CODE_TTL_MS, used: false, kind: kind, result: null });
@@ -275,10 +275,10 @@ function getPairingStatus(code) {
 
 // ---------------------------------------------------------------------------
 // Best-effort Wi-Fi SSID lookup, shown next to the pairing QR code so the
-// user can confirm their phone is on the same network — a pure UX nicety,
+// user can confirm their phone is on the same network â€” a pure UX nicety,
 // not a dependency. Deliberately does NOT use child_process: on at least one
 // real TV (Tizen, Node v12.4.0 sandbox) spawning a subprocess here brought
-// down the entire TizenBrew background process — not just this request —
+// down the entire TizenBrew background process â€” not just this request â€”
 // which stayed dead until TizenBrew itself was force-restarted. That's a
 // process-level crash outside JS's ability to catch (try/catch around
 // execFile did not help), so the fix is to never spawn a child process from
@@ -296,7 +296,7 @@ async function getWifiSsid() {
 // Provider packs: externally-hosted bundles of provider plugins (a manifest
 // + one .js file per provider), fetched over plain HTTP. Trust model:
 // installing a pack means this process will require() and execute arbitrary
-// JS from that URL — the pairing flow above is what gates this.
+// JS from that URL â€” the pairing flow above is what gates this.
 // ---------------------------------------------------------------------------
 
 function ensurePackDirs() {
@@ -315,7 +315,7 @@ function isSafeManifestUrl(url) {
   var host = u.hostname.toLowerCase();
   // Block loopback (would target the relay's own /resolve /pair etc, a
   // self-request loop) and link-local/metadata addresses. Ordinary private
-  // LAN hosts (192.168.x, 10.x) are allowed on purpose — self-hosting a pack
+  // LAN hosts (192.168.x, 10.x) are allowed on purpose â€” self-hosting a pack
   // on your own network is a legitimate, expected use of this feature.
   if (host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0' || host === '::1') return false;
   if (host.indexOf('169.254.') === 0 || host === '169.254.169.254') return false;
@@ -323,7 +323,7 @@ function isSafeManifestUrl(url) {
 }
 
 // Multiple packs live side by side, each in its own subdirectory of
-// COMMUNITY_DIR keyed by a short hash of its manifest URL — installing one
+// COMMUNITY_DIR keyed by a short hash of its manifest URL â€” installing one
 // pack must never touch another's files. PACK_CONFIG_PATH holds a map of
 // that hash -> { manifestUrl, name, installedAt, providerIds }.
 function packKey(manifestUrl) {
@@ -336,7 +336,7 @@ function loadPackConfig() {
   try {
     var parsed = JSON.parse(fs.readFileSync(PACK_CONFIG_PATH, 'utf-8'));
     // Tolerate the old single-pack shape ({url,name,installedAt,providerIds})
-    // from before packs were keyed — treat it as one entry rather than
+    // from before packs were keyed â€” treat it as one entry rather than
     // silently discarding whatever pack the user already had installed.
     if (parsed && !parsed.packs && parsed.url) {
       var legacyKey = packKey(parsed.url);
@@ -364,14 +364,14 @@ function clearDirFiles(dir) {
   var files = fs.readdirSync(dir);
   for (var i = 0; i < files.length; i++) {
     var f = files[i];
-    // fs.rmSync needs Node 14.14+; this sandbox runs v12.4.0 — these are
+    // fs.rmSync needs Node 14.14+; this sandbox runs v12.4.0 â€” these are
     // always plain files (never directories), so unlinkSync is equivalent.
     if (f.slice(-3) === '.js') fs.unlinkSync(path.join(dir, f));
   }
 }
 
 // Loads a just-written community provider file with require() (dynamic
-// import() throws unconditionally in this vm sandbox — see the file header)
+// import() throws unconditionally in this vm sandbox â€” see the file header)
 // and forces a fresh read via require.cache invalidation, since the same
 // path can be reused across installs.
 function requireFresh(absPath) {
@@ -402,13 +402,13 @@ async function installPack(manifestUrl) {
   fs.mkdirSync(dir, { recursive: true });
   clearDirFiles(dir);
 
-  // Optional `manifest.shared` — plain filenames (e.g. "hosts.js") fetched
+  // Optional `manifest.shared` â€” plain filenames (e.g. "hosts.js") fetched
   // and written into this pack's own directory *unvalidated* (no id/resolve
   // check), purely so provider files in the same pack can `require('./x')`
   // them for code reuse across multiple site providers in one pack (e.g. a
   // shared video-host extractor library). This works because, unlike
   // hlsRelay.js itself, provider files ARE loaded via real `require()` from
-  // real files on disk (see requireFresh) — sibling requires are fine here.
+  // real files on disk (see requireFresh) â€” sibling requires are fine here.
   // loadCommunityProviders already tolerates non-provider .js files sitting
   // in a pack dir (skips them with a warning), so no loader-side change was
   // needed for these to coexist with real providers.
@@ -437,7 +437,7 @@ async function installPack(manifestUrl) {
       fs.writeFileSync(destPath, code);
 
       // Validate it actually loads and exposes the right shape before
-      // counting it as installed — catches syntax errors / bad exports early.
+      // counting it as installed â€” catches syntax errors / bad exports early.
       var mod = requireFresh(destPath);
       var provider = mod && mod.default ? mod.default : mod; // tolerate `export default` transpiled output too
       if (!provider || !provider.id || typeof provider.resolve !== 'function') {
@@ -470,7 +470,7 @@ function uninstallPack(manifestUrl) {
   var dir = packDirFor(manifestUrl);
   clearDirFiles(dir);
   if (fs.existsSync(dir)) {
-    try { fs.rmdirSync(dir); } catch (e) { /* not empty (unexpected non-.js file) — leave it */ }
+    try { fs.rmdirSync(dir); } catch (e) { /* not empty (unexpected non-.js file) â€” leave it */ }
   }
   var config = loadPackConfig();
   var key = packKey(manifestUrl);
@@ -500,7 +500,7 @@ function loadCommunityProviders() {
           continue;
         }
         // Tag with source pack info so /providers can group by source in
-        // the Settings UI — not part of the pack-authoring contract itself.
+        // the Settings UI â€” not part of the pack-authoring contract itself.
         provider._packManifestUrl = packEntry ? packEntry.manifestUrl : null;
         provider._packName = packEntry ? packEntry.name : null;
         found.push(provider);
@@ -517,7 +517,7 @@ function loadAllProviders() {
     fs.mkdirSync(COMMUNITY_DIR, { recursive: true });
   } catch (e) {
     // Degrade to "no community providers" rather than take the whole relay
-    // down — this only blocks pack installs, not builtin providers/playback.
+    // down â€” this only blocks pack installs, not builtin providers/playback.
     console.error('[hlsRelay] Could not create community providers dir:', e.message);
   }
 
@@ -568,7 +568,7 @@ function lanAddress() {
 
 // `referer`, when a provider supplies one, is threaded through every proxied
 // URL (master playlist, sub-playlists, segments) so the upstream CDN's
-// hotlink protection sees the same Referer on every request in the chain —
+// hotlink protection sees the same Referer on every request in the chain â€”
 // some hosts 403 anything else, including no Referer at all.
 function proxied(absoluteUrl, referer) {
   var url = 'http://127.0.0.1:' + PORT + '/hls?url=' + encodeURIComponent(absoluteUrl);
@@ -613,7 +613,7 @@ function escapeHtml(s) {
 
 function wifiHint(ssid) {
   return ssid
-    ? '<p style="color:#4ade80;font-size:13px;">📶 TV is on Wi-Fi "<strong>' + escapeHtml(ssid) + '</strong>" — make sure your phone is on the same network.</p>'
+    ? '<p style="color:#4ade80;font-size:13px;">ðŸ“¶ TV is on Wi-Fi "<strong>' + escapeHtml(ssid) + '</strong>" â€” make sure your phone is on the same network.</p>'
     : '';
 }
 
@@ -623,9 +623,9 @@ function pairingPageHtml(code, valid, kind, ssid) {
   }
 
   if (kind === 'tmdb_key') {
-    return pairingPageShell('TFlix — Add TMDB Key',
+    return pairingPageShell('TFlix â€” Add TMDB Key',
       '<h1>Add Your TMDB API Key</h1>\n' +
-      '<p>Paste or type your personal TMDB API key. It\'s sent directly to your TV over your local network — nothing else sees it.</p>\n' +
+      '<p>Paste or type your personal TMDB API key. It\'s sent directly to your TV over your local network â€” nothing else sees it.</p>\n' +
       wifiHint(ssid) + '\n' +
       '<input id="key" type="text" placeholder="Your TMDB API key" autocapitalize="off" autocorrect="off" spellcheck="false" autofocus>\n' +
       '<button id="submit">Save to TV</button>\n' +
@@ -640,7 +640,7 @@ function pairingPageHtml(code, valid, kind, ssid) {
       '    const res = await fetch(\'/pair/submit\', { method: \'POST\', headers: {\'Content-Type\':\'application/json\'}, body: JSON.stringify({ code: \'' + code + '\', apiKey }) });\n' +
       '    const data = await res.json();\n' +
       '    if (!res.ok) throw new Error(data.error || \'Failed to send key\');\n' +
-      '    status.textContent = \'Sent! Check your TV — you can close this page.\';\n' +
+      '    status.textContent = \'Sent! Check your TV â€” you can close this page.\';\n' +
       '  } catch (e) {\n' +
       '    status.textContent = \'Error: \' + e.message;\n' +
       '  }\n' +
@@ -751,7 +751,7 @@ async function main() {
 
             // Three possible resolve() outcomes, checked in order:
             if (result && result.needsConfirmation) {
-              // Ambiguous title match — hand candidates back to the app to
+              // Ambiguous title match â€” hand candidates back to the app to
               // ask the user, rather than proxying/rewriting anything here.
               res.end(JSON.stringify({
                 needsConfirmation: true,
@@ -761,12 +761,13 @@ async function main() {
               return;
             }
             if (result && result.embedUrl) {
-              // Resolver couldn't (or chose not to) extract a raw stream —
+              // Resolver couldn't (or chose not to) extract a raw stream â€”
               // hand back an iframe-able URL instead. Must NOT go through
               // proxied(), which rewrites HLS playlists, not HTML pages.
               res.end(JSON.stringify({
                 embedUrl: result.embedUrl,
-                providerName: result.providerName
+                providerName: result.providerName,
+                sandbox: result.sandbox !== false
               }));
               return;
             }
@@ -789,7 +790,7 @@ async function main() {
 
         // Episode-availability badges. Only meaningful for a provider that
         // opted in via supportsAvailability (see docs/PROVIDER_PACKS.md) and
-        // only ever called by the app with an already-*confirmed* showId —
+        // only ever called by the app with an already-*confirmed* showId â€”
         // there's nothing useful (or safe) to report against an unconfirmed
         // guess, so this refuses rather than silently resolving one itself.
         if (reqUrl.pathname === '/episodes') {
@@ -823,7 +824,7 @@ async function main() {
         }
 
         // Native-catalog browse: one page of a catalogMode:'native' provider's
-        // own category listing. See docs/PROVIDER_PACKS.md §listCatalog.
+        // own category listing. See docs/PROVIDER_PACKS.md Â§listCatalog.
         if (reqUrl.pathname === '/browse') {
           var browseProviderId = reqUrl.searchParams.get('provider');
           var browseProvider = registry.get(browseProviderId);
@@ -881,7 +882,7 @@ async function main() {
         }
 
         // Native season list for a native 'tv' item. Missing getSeasons is
-        // NOT an error — an empty list tells the app to flatten straight to
+        // NOT an error â€” an empty list tells the app to flatten straight to
         // /native-episodes, distinct from "wrong/unregistered provider".
         if (reqUrl.pathname === '/seasons') {
           var seasonsProviderId = reqUrl.searchParams.get('provider');
@@ -908,7 +909,7 @@ async function main() {
         }
 
         // Native episode metadata for browsing (distinct from /episodes'
-        // bare-number availability list — see docs/PROVIDER_PACKS.md §0.5).
+        // bare-number availability list â€” see docs/PROVIDER_PACKS.md Â§0.5).
         if (reqUrl.pathname === '/native-episodes') {
           var neProviderId = reqUrl.searchParams.get('provider');
           var neProvider = registry.get(neProviderId);
@@ -1023,7 +1024,7 @@ async function main() {
         }
 
         // Direct install: for the webview's own "Browse Packs" UI, installing
-        // from the default catalog — no phone/QR round trip needed since the
+        // from the default catalog â€” no phone/QR round trip needed since the
         // request already originates from this device. Gated to loopback only;
         // a request arriving via the LAN interface (some other device on the
         // wifi) is rejected and must go through the pairing-code flow instead.
@@ -1056,7 +1057,7 @@ async function main() {
         }
 
         // Removes one installed pack, leaving all others in place. Same
-        // loopback-only gating as /packs/install — this is a local device
+        // loopback-only gating as /packs/install â€” this is a local device
         // settings action, not something a phone-pairing flow needs.
         if (reqUrl.pathname === '/packs/uninstall' && req.method === 'POST') {
           var uninstallRemote = (req.socket.remoteAddress || '').replace('::ffff:', '');
@@ -1112,3 +1113,4 @@ async function main() {
 main().catch(function (e) {
   console.error('[hlsRelay] Fatal startup error:', e && e.stack ? e.stack : e);
 });
+
