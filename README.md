@@ -1,6 +1,6 @@
 <div align="center">
 
-This TizenBrew site module opens Soap2Day and adds directional remote navigation. Install it with **Add GitHub Module**: `TreborNamor/t`. Version **2.1.0** appears in the TizenBrew module list.
+This TizenBrew site module opens Soap2Day's official PWA route and adds directional remote navigation. Install it with **Add GitHub Module**: `TreborNamor/t4`. Version **2.2.0** appears in the TizenBrew module list.
 
 # 📺 TFlix
 
@@ -54,8 +54,8 @@ TFlix runs as a module inside [**TizenBrew**](https://github.com/reisxd/TizenBre
 ### 2. Install TFlix
 
 1. Open **TizenBrew** on your Samsung TV.
-2. Choose **Add GitHub Module** and enter `TreborNamor/t2`.
-3. Select **TFlix T2**, version `2.0.8`, then launch it from the modules menu. Confirm `v2.0.8` in the app sidebar.
+2. Choose **Add GitHub Module** and enter `TreborNamor/t4`.
+3. Select **Soap2Day TV Navigation**, version `2.2.0`, then launch it from the modules menu.
 
 ### 3. Get a free TMDB API key
 
