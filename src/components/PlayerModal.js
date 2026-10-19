@@ -507,6 +507,9 @@ export class PlayerModal {
           </p>
         </div>
         <div class="player-controls">
+          <button class="btn btn-primary focusable primary-focus" id="player-focus-iframe-btn" style="padding: 8px 16px; font-size: 14px;" title="Move remote control into the player">
+            ${icon('play', { size: 16 })} Focus Player
+          </button>
           ${!this.nativeMode ? `
             <button class="btn btn-secondary focusable primary-focus" id="player-skip-server-btn" style="padding: 8px 16px; font-size: 14px;" title="Skip to Next Working Server">
               ${icon('zap', { size: 16 })} Next Server
@@ -530,11 +533,11 @@ export class PlayerModal {
       </div>
       <iframe 
         id="player-iframe"
-        class="player-iframe"
+        class="player-iframe focusable"
         referrerpolicy="origin"
         ${sandboxEnabled ? 'sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"' : ''}
         src="${embedUrl}"
-        tabindex="-1"
+        tabindex="0"
         allowfullscreen="true"
         webkitallowfullscreen="true"
         mozallowfullscreen="true"
@@ -548,6 +551,17 @@ export class PlayerModal {
     this.hudEl = this.playerEl.querySelector('#player-hud');
 
     const iframe = this.playerEl.querySelector('#player-iframe');
+    const focusIframeBtn = this.playerEl.querySelector('#player-focus-iframe-btn');
+    if (focusIframeBtn && iframe) {
+      focusIframeBtn.addEventListener('click', () => {
+        iframe.focus();
+        try {
+          iframe.contentWindow.focus();
+        } catch (e) {
+          // Focusing the iframe element is sufficient when its provider blocks script access.
+        }
+      });
+    }
     if (iframe) {
       iframe.addEventListener('error', () => {
         console.warn(`[PlayerModal] Iframe failed to load on server: ${this.currentProviderId}`);
@@ -787,7 +801,7 @@ export class PlayerModal {
       if (this.activeDrawer) return;
       if (this.hudEl && this.playerEl && document.body.contains(this.playerEl)) {
         this.hudEl.classList.add('hidden');
-        if (this.playerEl.contains(document.activeElement)) {
+        if (this.hudEl.contains(document.activeElement)) {
           document.activeElement.blur();
         }
       }
