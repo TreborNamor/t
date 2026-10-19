@@ -1549,3 +1549,15 @@ html, body {
 }
 
 
+
+
+/* Keep the installed TV build identifiable from the home screen. */
+.sidebar-brand::after {
+  content: 'v2.0.5-popup.3';
+  margin-top: -16px;
+  color: var(--color-text-muted);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
