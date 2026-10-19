@@ -1,7 +1,7 @@
 {
   "name": "t2",
   "appName": "Soap2Day TV Navigation",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Soap2Day website module with directional remote navigation for Samsung Smart TVs.",
   "packageType": "mods",
   "main": "tv-navigation.js",
@@ -26,12 +26,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/TreborNamor/t"
+    "url": "https://github.com/TreborNamor/t4"
   },
   "bugs": {
-    "url": "https://github.com/TreborNamor/t/issues"
+    "url": "https://github.com/TreborNamor/t4/issues"
   },
-  "homepage": "https://github.com/TreborNamor/t#readme",
+  "homepage": "https://github.com/TreborNamor/t4#readme",
   "keywords": [
     "tizenbrew",
     "tizen",
@@ -52,6 +52,6 @@
     "hls.js": "^1.7.1",
     "qrcode": "^1.5.4"
   },
-  "websiteURL": "https://ww25.soap2day.day/movies-qfva3/",
+  "websiteURL": "https://ww25.soap2day.day/pwa/?s2d_surface=pwa",
   "evaluateScriptOnDocumentStart": false
 }
