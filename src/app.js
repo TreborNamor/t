@@ -124,6 +124,7 @@ class TFlixApp {
         <div class="sidebar-brand">
           <span class="brand-logo">TFLIX</span>
           <span class="brand-badge">TV</span>
+          <span class="brand-version">v${__APP_VERSION__}</span>
         </div>
         <div class="nav-links">
           ${navItem('home', 'home', 'Home')}

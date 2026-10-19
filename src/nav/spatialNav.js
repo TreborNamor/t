@@ -242,6 +242,14 @@ class SpatialNavigationManager {
     }
 
     // Handle Media transport keys
+    // Cross-origin player controls handle their own input. Do not turn an
+    // OK/arrow key into a click on the last focused app button after the
+    // iframe takes focus. Back above still works when delivered to this window.
+    const activeElement = document.activeElement;
+    if (activeElement && activeElement.tagName === 'IFRAME' && activeElement.dataset.playerInput === 'true') {
+      return;
+    }
+
     if (
       keyCode === TIZEN_KEYS.MEDIA_PLAY_PAUSE ||
       keyCode === TIZEN_KEYS.MEDIA_PLAY ||

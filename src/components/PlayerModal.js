@@ -9,7 +9,7 @@ import { openServerMenu } from '../ui/serverMenu.js';
 
 export class PlayerModal {
   // nativeMode: true means `media` came from ProviderBrowseScreen (see
-  // NATIVE_CATALOG_PLAN.md Â§5 phase 4) â€” media.id is the pack's own native
+  // NATIVE_CATALOG_PLAN.md §5 phase 4) — media.id is the pack's own native
   // id (not a TMDB id) and media.source is pinned to that one provider.
   // Disables fallback rotation, the multi-provider attemptedProviders UI,
   // and every TMDB-anchored feature (confirm-match, episode drawer,
@@ -163,7 +163,7 @@ export class PlayerModal {
     }
   }
 
-  // nativeMode's equivalent of renderAllServersFailedView â€” there is only
+  // nativeMode's equivalent of renderAllServersFailedView — there is only
   // ever one provider in this flow (no rotation), so this offers Retry/Exit
   // without any "all servers" framing.
   renderNativePlaybackFailedView(reason = '') {
@@ -245,9 +245,9 @@ export class PlayerModal {
   }
 
   // Shown when a "direct" provider's resolve() can't confidently match the
-  // title (see docs/PROVIDER_PACKS.md â€” the `needsConfirmation` outcome).
+  // title (see docs/PROVIDER_PACKS.md — the `needsConfirmation` outcome).
   // The choice is cached via storage.setConfirmedShowId, keyed by provider +
-  // TMDB id, so this only ever fires once per show â€” not per episode.
+  // TMDB id, so this only ever fires once per show — not per episode.
   renderConfirmMatchView(candidates = [], providerName = '') {
     if (this.playerEl && this.playerEl.parentNode) {
       this.playerEl.parentNode.removeChild(this.playerEl);
@@ -268,13 +268,13 @@ export class PlayerModal {
         <div style="max-width: 560px; width: 90%; text-align: center; padding: 40px; background: #181824; border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.9);">
           <h2 style="color: #fff; font-size: 20px; font-weight: 800; margin-bottom: 8px;">Confirm the match on ${providerName || 'this server'}</h2>
           <p style="color: #a1a1aa; font-size: 14px; line-height: 1.5; margin-bottom: 20px;">
-            Couldn't confidently match this title automatically. Pick the right one below â€” you'll only be asked once for this show.
+            Couldn't confidently match this title automatically. Pick the right one below — you'll only be asked once for this show.
           </p>
           <div style="text-align: right; margin-bottom: 8px;">
             ${items || '<p style="color:#a1a1aa;">No matches found.</p>'}
           </div>
           <button class="btn btn-secondary focusable" id="btn-confirm-skip" style="padding: 10px 24px; font-size: 14px; margin-top: 8px;">
-            ${icon('x')} None of these â€” try next server
+            ${icon('x')} None of these — try next server
           </button>
         </div>
       </div>
@@ -340,8 +340,8 @@ export class PlayerModal {
 
   skipToNextServer() {
     clearTimeout(this.embedTimeoutTimer);
-    // Excludes catalogMode: 'native' providers â€” this modal is always in the
-    // TMDB-driven flow; see docs/PROVIDER_PACKS.md's "Native catalogs" Â§0.7.
+    // Excludes catalogMode: 'native' providers — this modal is always in the
+    // TMDB-driven flow; see docs/PROVIDER_PACKS.md's "Native catalogs" §0.7.
     const providers = getProviders().filter(p => p.catalogMode !== 'native');
     const currentIndex = providers.findIndex(p => p.id === this.currentProviderId);
     const nextIndex = (currentIndex + 1) % providers.length;
@@ -411,7 +411,7 @@ export class PlayerModal {
           <h2 style="color: #fff; font-size: 24px; font-weight: 800; margin-bottom: 12px;">Connect Stream Provider</h2>
           <p style="color: #a1a1aa; font-size: 15px; line-height: 1.5; margin-bottom: 24px;">
             TFlix is a clean open-source player with no bundled sources. Add a native HLS provider pack or your own
-            embed repository URL from <strong style="color: #e50914;">Settings â†’ Streaming Providers</strong>.
+            embed repository URL from <strong style="color: #e50914;">Settings → Streaming Providers</strong>.
           </p>
           <div style="display: flex; gap: 14px; justify-content: center;">
             <button class="btn btn-secondary focusable primary-focus" id="btn-player-cancel" style="padding: 12px 20px; font-size: 15px;">
@@ -431,7 +431,7 @@ export class PlayerModal {
   }
 
   // A native TV item's `media.id` is the specific episode's own id (what
-  // resolveNativeStream needs) â€” not stable across episodes of the same
+  // resolveNativeStream needs) — not stable across episodes of the same
   // show. Storage/history must key on `nativeShowId` instead so watching
   // episode after episode advances one Continue Watching row rather than
   // creating a new one per episode. See ProviderBrowseScreen.js's
@@ -472,8 +472,8 @@ export class PlayerModal {
     this.attemptedProviders.add(this.currentProviderId);
     this.recordInitialHistory();
 
-    // Excludes catalogMode: 'native' providers â€” this is the TMDB-driven
-    // embed-playback path; see docs/PROVIDER_PACKS.md's "Native catalogs" Â§0.7.
+    // Excludes catalogMode: 'native' providers — this is the TMDB-driven
+    // embed-playback path; see docs/PROVIDER_PACKS.md's "Native catalogs" §0.7.
     const providers = getProviders().filter(p => p.catalogMode !== 'native');
     if (!this.nativeMode && (!this.currentProviderId || !providers.some(p => p.id === this.currentProviderId))) {
       this.currentProviderId = storage.getDefaultProvider() || (providers[0] ? providers[0].id : '');
@@ -484,7 +484,7 @@ export class PlayerModal {
     const startAt = saved && saved.currentTime > 15 ? saved.currentTime : 0;
 
     // overrideUrl: a "direct" provider that resolved to { embedUrl } instead
-    // of a raw stream â€” the URL is already final, skip the {id} templating
+    // of a raw stream — the URL is already final, skip the {id} templating
     // that getEmbedUrl() does for classic embed-type providers.
     const embedUrl = overrideUrl || getEmbedUrl(this.currentProviderId, isTv ? 'tv' : 'movie', this.media.id, season, episode, startAt);
     const configuredProvider = getProviderById(this.currentProviderId);
@@ -500,7 +500,7 @@ export class PlayerModal {
         <div class="player-info">
           <h2 id="current-player-title">${title}</h2>
           <p id="current-player-meta">
-            ${isTv ? `Season ${season} â€¢ Episode ${episode}` : 'Movie'} 
+            ${isTv ? `Season ${season} • Episode ${episode}` : 'Movie'} 
             | Server: <span id="current-server-name">${this.getProviderName(this.currentProviderId)}</span>
             ${fallbackReason ? `<span class="player-fallback-tag">Auto-switched: ${fallbackReason}</span>` : ''}
             ${startAt > 0 ? `<span style="color:#fbbf24; margin-left:8px;">(Resumed at ${this.formatTime(startAt)})</span>` : ''}
@@ -533,11 +533,12 @@ export class PlayerModal {
       </div>
       <iframe 
         id="player-iframe"
-        class="player-iframe focusable"
+        class="player-iframe"
+        data-player-input="true"
         referrerpolicy="origin"
         ${sandboxEnabled ? 'sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"' : ''}
         src="${embedUrl}"
-        tabindex="0"
+        tabindex="-1"
         allowfullscreen="true"
         webkitallowfullscreen="true"
         mozallowfullscreen="true"
@@ -553,16 +554,7 @@ export class PlayerModal {
     const iframe = this.playerEl.querySelector('#player-iframe');
     const focusIframeBtn = this.playerEl.querySelector('#player-focus-iframe-btn');
     if (focusIframeBtn && iframe) {
-      focusIframeBtn.addEventListener('click', () => {
-        const activeIframe = this.playerEl && this.playerEl.querySelector('#player-iframe');
-        if (!activeIframe) return;
-        activeIframe.focus();
-        try {
-          activeIframe.contentWindow.focus();
-        } catch (e) {
-          // Focusing the iframe element is sufficient when its provider blocks script access.
-        }
-      });
+      focusIframeBtn.addEventListener('click', () => this.focusEmbedPlayer());
     }
     if (iframe) {
       iframe.addEventListener('error', () => {
@@ -665,7 +657,7 @@ export class PlayerModal {
     const title = this.media.name || this.media.title || 'Playing Media';
     const metaEl = this.playerEl ? this.playerEl.querySelector('#current-player-meta') : null;
     if (metaEl) {
-      metaEl.innerHTML = `Season ${season} â€¢ Episode ${episode} | Server: <span>${this.getProviderName(this.currentProviderId)}</span>`;
+      metaEl.innerHTML = `Season ${season} • Episode ${episode} | Server: <span>${this.getProviderName(this.currentProviderId)}</span>`;
     }
 
     const embedUrl = getEmbedUrl(this.currentProviderId, 'tv', this.media.id, season, episode);
@@ -687,6 +679,9 @@ export class PlayerModal {
   }
 
   setupPostMessageListener() {
+    if (this.postMessageListener) {
+      window.removeEventListener('message', this.postMessageListener);
+    }
     this.postMessageListener = (event) => {
       try {
         const isTv = this.media.media_type === 'tv' || this.media.mediaType === 'tv';
@@ -705,7 +700,7 @@ export class PlayerModal {
               const cur = data.currentTime || (data.data && data.data.currentTime);
               const dur = data.duration || (data.data && data.data.duration);
               // Throttled the same way VideoPlayer.js's native-player path
-              // saves progress (a 3s setInterval there) â€” VidLink can post
+              // saves progress (a 3s setInterval there) — VidLink can post
               // timeupdate messages far more often than that, and each save
               // is a synchronous localStorage read+write of the whole
               // history list, which is main-thread work best not repeated
@@ -772,11 +767,11 @@ export class PlayerModal {
   }
 
   // Lets the user correct (or explicitly ratify) a `fuzzyMatch` provider's
-  // auto-accepted single-candidate match after the fact â€” see the
+  // auto-accepted single-candidate match after the fact — see the
   // forceConfirm note on resolveDirectStream. Re-running with forceConfirm
   // always surfaces renderConfirmMatchView, even for one candidate, so
   // picking it there is what actually caches it via setConfirmedShowId
-  // (auto-accepted matches are deliberately never cached on their own â€”
+  // (auto-accepted matches are deliberately never cached on their own —
   // see docs/PROVIDER_PACKS.md's "Optional capabilities").
   reconfirmMatch() {
     if (this.activePlayerInstance) {
@@ -791,12 +786,43 @@ export class PlayerModal {
     this.renderNativePlayer(null, true);
   }
 
-  wakeHud() {
+  focusEmbedPlayer() {
+    const iframe = this.playerEl && this.playerEl.querySelector('#player-iframe');
+    if (!iframe || (nav.activeScope && nav.activeScope !== this.playerEl)) return;
+    clearTimeout(this.hudTimer);
+    if (this.hudEl) this.hudEl.classList.add('hidden');
+    // A full-screen iframe must not receive the navigation highlight: it
+    // scales ordinary controls and raises them above the app's HUD.
+    iframe.classList.remove('tflix-focused');
+    if (nav.currentFocusedElement && this.playerEl.contains(nav.currentFocusedElement)) {
+      nav.currentFocusedElement.classList.remove('tflix-focused');
+      nav.currentFocusedElement = null;
+    }
+    iframe.focus();
+    try {
+      iframe.contentWindow.focus();
+    } catch (e) {
+      // Cross-origin players own their own controls.
+    }
+  }
+
+  wakeHud(event) {
     if (!this.hudEl || !this.playerEl || !document.body.contains(this.playerEl)) return;
     // An overlay spawned by the player (episode drawer, server menu) is
-    // appended to document.body and owns nav's scope while open â€” stealing
+    // appended to document.body and owns nav's scope while open — stealing
     // focus back here would break navigation inside it on the next keypress.
     if (nav.activeScope && nav.activeScope !== this.playerEl) return;
+    const iframe = this.playerEl.querySelector('#player-iframe');
+    // Parent-window activity must not steal focus while the provider's
+    // controls own remote/keyboard input. Mouse movement may reveal the HUD
+    // for a pointer user without refocusing an app button.
+    if (event && document.activeElement === iframe) {
+      if (event.type === 'mousemove') {
+        this.hudEl.classList.remove('hidden');
+        this.resetHudTimer();
+      }
+      return;
+    }
     const wasHidden = this.hudEl.classList.contains('hidden');
     this.hudEl.classList.remove('hidden');
     this.resetHudTimer();
@@ -809,12 +835,9 @@ export class PlayerModal {
   resetHudTimer() {
     clearTimeout(this.hudTimer);
     this.hudTimer = setTimeout(() => {
-      if (this.activeDrawer) return;
+      if (this.activeDrawer || (nav.activeScope && nav.activeScope !== this.playerEl)) return;
       if (this.hudEl && this.playerEl && document.body.contains(this.playerEl)) {
-        this.hudEl.classList.add('hidden');
-        if (this.hudEl.contains(document.activeElement)) {
-          document.activeElement.blur();
-        }
+        this.focusEmbedPlayer();
       }
     }, 4500);
   }
@@ -891,4 +914,3 @@ export class PlayerModal {
     if (this.onClose) this.onClose();
   }
 }
-

@@ -58,7 +58,7 @@ html, body {
   height: 0;
 }
 
-/* Icon utility â€” inherits currentColor from its containing element */
+/* Icon utility — inherits currentColor from its containing element */
 .icon {
   flex-shrink: 0;
   display: inline-block;
@@ -108,10 +108,9 @@ html, body {
   letter-spacing: 1px;
 }
 
-.sidebar-brand::after {
-  content: 'v2.0.7';
+.brand-version {
   color: var(--color-text-muted);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.3px;
   white-space: nowrap;
@@ -512,13 +511,13 @@ html, body {
 }
 
 /* The server menu is opened from inside the native (.native-player-screen,
-   z-index 600) and embed (.player-screen, z-index 500) players â€” the
+   z-index 600) and embed (.player-screen, z-index 500) players — the
    default modal z-index of 200 rendered it invisibly behind them. */
 .server-menu-overlay {
   z-index: 800;
 }
 
-/* Same issue as .server-menu-overlay above â€” the range menu also opens from
+/* Same issue as .server-menu-overlay above — the range menu also opens from
    inside .in-player-episode-drawer (z-index 700), so it needs to clear that
    too or it renders (and is clickable) behind the drawer. */
 .range-menu-overlay {
@@ -616,7 +615,7 @@ html, body {
 
 /* Collapses a long, chunked season's episode ranges (which as a flat row of
    buttons can run to dozens wide) behind one button that opens the TV-safe
-   rangeMenu.js picker instead â€” see .range-menu* below and hidden by default
+   rangeMenu.js picker instead — see .range-menu* below and hidden by default
    via the [hidden] attribute when a season isn't chunked. */
 .range-picker-btn {
   display: inline-flex;
@@ -718,7 +717,7 @@ html, body {
 }
 
 /* Episode-availability badge for the currently-selected provider (see
-   DetailsModal.js's and EpisodeDrawer.js's loadAvailability) â€”
+   DetailsModal.js's and EpisodeDrawer.js's loadAvailability) —
    informational, not blocking. */
 .episode-unavailable .episode-thumb,
 .episode-unavailable .drawer-ep-thumb-wrap {
@@ -777,10 +776,14 @@ html, body {
 }
 
 .player-iframe {
+  flex: 1;
+  min-height: 0;
   width: 100%;
   height: 100%;
   border: none;
   background: #000;
+  transform: none !important;
+  z-index: 0;
 }
 
 .player-hud {
@@ -1082,7 +1085,7 @@ html, body {
 .timeline-track.tflix-focused {
   height: 12px;
   box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.9), 0 0 20px rgba(229, 9, 20, 0.5) !important;
-  /* Override the generic .tflix-focused scale/z-index â€” growing the track
+  /* Override the generic .tflix-focused scale/z-index — growing the track
      from its center and raising it above siblings makes it visually cover
      the adjacent current-time label. */
   transform: none !important;
@@ -1556,6 +1559,5 @@ html, body {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-
 
 
