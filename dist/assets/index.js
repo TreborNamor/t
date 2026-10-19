@@ -1116,8 +1116,8 @@ Minimum version required to store current data is: `+E+`.
     `:'<button class="btn btn-secondary focusable" id="tour-start-pairing-btn" style="padding: 10px 18px; font-size: 14px; margin-top: auto;">Generate QR Code</button>'}renderProvidersStep(){return`
       <h2 style="font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px;">2. Add a Streaming Provider</h2>
       <p style="color: #a1a1aa; font-size: 14px; line-height: 1.6; margin-bottom: 22px;">
-        TFlix is a clean open-source player with no bundled sources. Browse native HLS provider packs below,
-        or skip this and configure a provider (including your own embed repository URL) later in Settings.
+        This T2 build includes Rakan, Bard, Xayah, Ekko, Naafiri, and Ryze. You can choose a default server in Settings
+        or optionally browse native provider packs below.
       </p>
       <div style="background: #1a1a24; padding: 16px; border-radius: 10px;">
         ${this.renderCatalogUi()}
