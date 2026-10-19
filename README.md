@@ -1,6 +1,6 @@
 <div align="center">
 
-This personal T2 fork bundles a TMDB key and six embed provider definitions. Install it in TizenBrew with **Add GitHub Module**: `TreborNamor/t2`. Version **2.0.8** is visible in the app sidebar.
+This TizenBrew site module opens Soap2Day and adds directional remote navigation. Install it with **Add GitHub Module**: `TreborNamor/t`. Version **2.1.0** appears in the TizenBrew module list.
 
 # 📺 TFlix
 
