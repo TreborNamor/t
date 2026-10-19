@@ -53,7 +53,7 @@ export class SetupTourModal {
               <span style="width:8px; height:8px; border-radius:50%; background:${i === this.step ? '#e50914' : 'rgba(255,255,255,0.2)'}; transition: background 0.2s;"></span>
             `).join('')}
           </div>
-          <button class="focusable" id="tour-skip-btn" style="background:none; border:none; color:#71717a; font-size:13px; cursor:pointer;">Skip Tour ›</button>
+          <button class="focusable" id="tour-skip-btn" style="background:none; border:none; color:#71717a; font-size:13px; cursor:pointer;">Skip Tour â€º</button>
         </div>
         <div id="tour-step-body" style="min-height: 320px; padding-top: 18px;">
           ${this.renderStep()}
@@ -86,7 +86,7 @@ export class SetupTourModal {
         <div style="margin-bottom: 18px; color: #e50914; display: flex; justify-content: center;">${icon('tv', { size: 56 })}</div>
         <h2 style="font-size: 30px; font-weight: 800; color: #fff; margin-bottom: 14px;">Welcome to TFlix</h2>
         <p style="color: #a1a1aa; font-size: 16px; line-height: 1.6; max-width: 480px; margin: 0 auto 32px;">
-          Quick setup — two steps, about a minute. You'll connect your free TMDB catalog key and (optionally) pick a streaming provider.
+          Quick setup â€” two steps, about a minute. You'll connect your free TMDB catalog key and (optionally) pick a streaming provider.
         </p>
         <button class="btn btn-primary focusable primary-focus" id="tour-next-btn" style="padding: 14px 36px; font-size: 16px;">
           Get Started
@@ -101,12 +101,12 @@ export class SetupTourModal {
       <h2 style="font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px;">1. Connect Your TMDB Key</h2>
       <p style="color: #a1a1aa; font-size: 14px; line-height: 1.6; margin-bottom: 22px;">
         TFlix needs a free personal TMDB API key to browse the catalog. Get one at
-        <strong style="color: #e50914;">themoviedb.org/settings/api</strong> — then enter it below or scan the QR code with your phone.
+        <strong style="color: #e50914;">themoviedb.org/settings/api</strong> â€” then enter it below or scan the QR code with your phone.
       </p>
 
       ${hasKey ? `
         <div style="background: #142a1c; border: 1px solid rgba(74,222,128,0.3); padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; color: #4ade80; font-size: 14px; font-weight: 600;">
-          ${icon('check', { size: 14 })} TMDB key configured — you're good to go.
+          ${icon('check', { size: 14 })} TMDB key configured â€” you're good to go.
         </div>
       ` : `
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 12px;">
@@ -157,8 +157,8 @@ export class SetupTourModal {
     return `
       <h2 style="font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px;">2. Add a Streaming Provider</h2>
       <p style="color: #a1a1aa; font-size: 14px; line-height: 1.6; margin-bottom: 22px;">
-        TFlix is a clean open-source player with no bundled sources. Browse native HLS provider packs below,
-        or skip this and configure a provider (including your own embed repository URL) later in Settings.
+        This T2 build includes Rakan, Bard, Xayah, Ekko, Naafiri, and Ryze. You can choose a default server in Settings
+        or optionally browse native provider packs below.
       </p>
       <div style="background: #1a1a24; padding: 16px; border-radius: 10px;">
         ${this.renderCatalogUi()}
@@ -185,7 +185,7 @@ export class SetupTourModal {
                 <div style="font-size: 11px; color: #a1a1aa; margin-top: 2px;">${pack.description || ''}</div>
               </div>
               <button class="btn ${installing ? 'btn-secondary' : 'btn-primary'} focusable install-pack-btn" data-manifest-url="${pack.manifestUrl}" style="padding: 7px 14px; font-size: 12px; white-space: nowrap;" ${installing ? 'disabled' : ''}>
-                ${installing ? 'Installing…' : '⬇ Install'}
+                ${installing ? 'Installingâ€¦' : 'â¬‡ Install'}
               </button>
             </div>
           `;
@@ -205,7 +205,7 @@ export class SetupTourModal {
         <p style="color: #a1a1aa; font-size: 15px; line-height: 1.6; max-width: 460px; margin: 0 auto 32px;">
           ${hasKey
             ? 'TFlix is configured and ready to browse. You can always change your key or providers later in Settings.'
-            : "You haven't added a TMDB key yet — you can still explore, but browsing the catalog will ask for one. Add it any time from Settings."}
+            : "You haven't added a TMDB key yet â€” you can still explore, but browsing the catalog will ask for one. Add it any time from Settings."}
         </p>
         <button class="btn btn-primary focusable primary-focus" id="tour-finish-btn" style="padding: 14px 36px; font-size: 16px;">
           Enter TFlix
@@ -297,7 +297,7 @@ export class SetupTourModal {
   async startKeyPairing() {
     const available = await isRelayAvailable();
     if (!available) {
-      this.pairing = { status: 'error', message: 'Phone pairing needs the local TizenBrew service — enter the key on the TV instead.' };
+      this.pairing = { status: 'error', message: 'Phone pairing needs the local TizenBrew service â€” enter the key on the TV instead.' };
       this.updateView();
       return;
     }
@@ -419,3 +419,4 @@ export class SetupTourModal {
     if (this.onComplete) this.onComplete();
   }
 }
+
