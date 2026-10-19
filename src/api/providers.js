@@ -234,10 +234,15 @@ export async function fetchProvidersFromUrl(url) {
  * merged with any embed-style providers loaded from a community JSON URL.
  */
 export function getProviders() {
-  const embeds = storage.getCustomProviders().filter(p => p.type !== 'direct');
-  const customIds = new Set(embeds.map(p => p.id));
-  const builtIns = BUILT_IN_EMBED_PROVIDERS.filter(p => !customIds.has(p.id));
-  return [...relayProviders, ...builtIns, ...embeds];
+  const customEmbeds = storage.getCustomProviders().filter(p => p.type !== 'direct');
+  const builtInIds = new Set(BUILT_IN_EMBED_PROVIDERS.map(p => p.id));
+  // The bundled definitions are authoritative for matching ids. Old relay
+  // packs and saved provider repositories can remain in TV storage across an
+  // app update, so let either one shadowing these entries would keep using
+  // stale resolver/sandbox settings instead of the updated URLs.
+  const relayOnly = relayProviders.filter(p => !builtInIds.has(p.id));
+  const customOnly = customEmbeds.filter(p => !builtInIds.has(p.id));
+  return [...relayOnly, ...BUILT_IN_EMBED_PROVIDERS, ...customOnly];
 }
 
 /**
