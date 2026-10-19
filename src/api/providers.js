@@ -28,6 +28,66 @@ export {
 
 const RELAY_BASE = 'http://127.0.0.1:47993';
 
+// Built-in embed sources for this personal TFlix fork. These mirror the
+// user's providers.json so a fresh app install does not depend on adding a
+// separate provider repository in Settings.
+const BUILT_IN_EMBED_PROVIDERS = [
+  {
+    id: 'rakan',
+    name: 'Rakan',
+    description: 'Generally better quality.',
+    type: 'embed',
+    sandbox: false,
+    movieUrl: 'https://vixsrc.to/movie/{id}?autoplay=true&lang=en',
+    tvUrl: 'https://vixsrc.to/tv/{id}/{season}/{episode}?autoplay=true&lang=en'
+  },
+  {
+    id: 'bard',
+    name: 'Bard',
+    description: 'Recommended for recently released movies.',
+    type: 'embed',
+    sandbox: false,
+    movieUrl: 'https://moviesapi.to/movie/{id}',
+    tvUrl: 'https://moviesapi.to/tv/{id}-{season}-{episode}'
+  },
+  {
+    id: 'xayah',
+    name: 'Xayah',
+    description: 'Recommended for recently released movies.',
+    type: 'embed',
+    sandbox: false,
+    movieUrl: 'https://vidsrc.sh/embed/movie?tmdb={id}&autoplay=1',
+    tvUrl: 'https://vidsrc.sh/embed/tv?tmdb={id}&season={season}&episode={episode}&autoplay=1&autonext=1'
+  },
+  {
+    id: 'ekko',
+    name: 'Ekko',
+    description: 'May have 4K. Generally better quality.',
+    type: 'embed',
+    sandbox: false,
+    movieUrl: 'https://cinesrc.st/embed/movie/{id}?autoplay=true&prioritize=true&lastserver=wave',
+    tvUrl: 'https://cinesrc.st/embed/tv/{id}?s={season}&e={episode}&autoplay=true&autonext=true&prioritize=true&lastserver=wave'
+  },
+  {
+    id: 'naafiri',
+    name: 'Naafiri',
+    description: 'May have 4K. Generally better quality.',
+    type: 'embed',
+    sandbox: false,
+    movieUrl: 'https://vidfast.vc/movie/{id}?autoPlay=true',
+    tvUrl: 'https://vidfast.vc/tv/{id}/{season}/{episode}?autoPlay=true'
+  },
+  {
+    id: 'ryze',
+    name: 'Ryze',
+    description: 'Generally better quality.',
+    type: 'embed',
+    sandbox: false,
+    movieUrl: 'https://vidlink.pro/movie/{id}?title=true&poster=true&autoplay=true',
+    tvUrl: 'https://vidlink.pro/tv/{id}/{season}/{episode}?title=true&poster=true&autoplay=true&nextbutton=true'
+  }
+];
+
 // The only provider-pack-related thing hardcoded in the app: a pointer to a
 // catalog, not to any specific provider. Swappable without a code change if
 // this index ever needs to move.
@@ -175,7 +235,9 @@ export async function fetchProvidersFromUrl(url) {
  */
 export function getProviders() {
   const embeds = storage.getCustomProviders().filter(p => p.type !== 'direct');
-  return [...relayProviders, ...embeds];
+  const customIds = new Set(embeds.map(p => p.id));
+  const builtIns = BUILT_IN_EMBED_PROVIDERS.filter(p => !customIds.has(p.id));
+  return [...relayProviders, ...builtIns, ...embeds];
 }
 
 /**
