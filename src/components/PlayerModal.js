@@ -554,9 +554,11 @@ export class PlayerModal {
     const focusIframeBtn = this.playerEl.querySelector('#player-focus-iframe-btn');
     if (focusIframeBtn && iframe) {
       focusIframeBtn.addEventListener('click', () => {
-        iframe.focus();
+        const activeIframe = this.playerEl && this.playerEl.querySelector('#player-iframe');
+        if (!activeIframe) return;
+        activeIframe.focus();
         try {
-          iframe.contentWindow.focus();
+          activeIframe.contentWindow.focus();
         } catch (e) {
           // Focusing the iframe element is sufficient when its provider blocks script access.
         }
@@ -669,7 +671,16 @@ export class PlayerModal {
     const embedUrl = getEmbedUrl(this.currentProviderId, 'tv', this.media.id, season, episode);
     const iframe = this.playerEl ? this.playerEl.querySelector('#player-iframe') : null;
     if (iframe) {
-      iframe.src = embedUrl;
+      // Recreate the frame for each episode just as the reference player's
+      // loadPlayer() does on server changes. Reusing a cross-origin browsing
+      // context can retain stale Permissions Policy and player state.
+      const replacement = iframe.cloneNode(false);
+      replacement.addEventListener('error', () => {
+        console.warn(`[PlayerModal] Iframe failed to load on server: ${this.currentProviderId}`);
+        this.handleFallback(this.currentProviderId, 'Iframe connection error');
+      });
+      replacement.src = embedUrl;
+      iframe.replaceWith(replacement);
     }
 
     this.wakeHud();
