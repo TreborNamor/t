@@ -110,7 +110,7 @@
       .find(isVisible);
     const scope = modal || document;
     return [...scope.querySelectorAll(SELECTOR)].filter(element => {
-      if (!isVisible(element) || isFixedWidget(element) || element.tabIndex < 0) return false;
+      if (isEditable(element) || !isVisible(element) || isFixedWidget(element) || element.tabIndex < 0) return false;
       const rect = element.getBoundingClientRect();
       if (element.tagName === 'BUTTON' && rect.width * rect.height < 1800) return false;
       return true;
