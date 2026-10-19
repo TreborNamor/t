@@ -16,11 +16,15 @@ const STORAGE_KEYS = {
   EPISODE_AVAILABILITY: 'tflix_episode_availability'
 };
 
+// This fork's personal key is bundled so a fresh TizenBrew install opens
+// directly to the catalog instead of prompting for setup.
+const BUILT_IN_TMDB_API_KEY = '35075c965371ccfe2358d6175b9a8aaf';
+
 const EPISODE_AVAILABILITY_TTL_MS = 24 * 60 * 60 * 1000;
 
 export const storage = {
   getApiKey() {
-    return localStorage.getItem(STORAGE_KEYS.TMDB_API_KEY) || '';
+    return localStorage.getItem(STORAGE_KEYS.TMDB_API_KEY) || BUILT_IN_TMDB_API_KEY;
   },
 
   hasApiKey() {
@@ -52,7 +56,7 @@ export const storage = {
     localStorage.setItem(STORAGE_KEYS.PLAYER_MODE, mode);
   },
 
-  // Embed-type provider sources — each one a repository URL the user added,
+  // Embed-type provider sources â€” each one a repository URL the user added,
   // kept as its own group rather than merged into one flat list, so adding
   // a second source doesn't wipe the first (see providers.js#fetchProvidersFromUrl).
   getProviderSources() {
@@ -102,7 +106,7 @@ export const storage = {
 
   // Composite identity for anything id-keyed (watchlist/history dedup and
   // lookup). A bare `id` is no longer sufficient once a native-catalog
-  // provider's own id space exists alongside TMDB's — the two could
+  // provider's own id space exists alongside TMDB's â€” the two could
   // theoretically collide. `source` is `'tmdb'` for every existing/TMDB-flow
   // record, or a providerId for a native item (see docs/PROVIDER_PACKS.md's
   // "Native catalogs" section).
@@ -186,7 +190,7 @@ export const storage = {
     const episode = item.episode || (existing ? existing.episode : 1);
     // Only one history record is kept per show/movie id, so switching
     // episodes reuses this same record. Carrying over `existing`'s saved
-    // progress here is only correct when it's progress for THIS episode —
+    // progress here is only correct when it's progress for THIS episode â€”
     // otherwise a fresh episode inherits whatever time the last one left
     // off at, and the resume-progress check (which reads this record right
     // after this call) "resumes" the new episode into the old one's spot.
@@ -264,11 +268,11 @@ export const storage = {
 
   // Caches a user's disambiguation choice for an ambiguous title match on a
   // "direct" provider (see resolve()'s `needsConfirmation` outcome), keyed
-  // by provider + TMDB id, so a long-running series only ever prompts once —
+  // by provider + TMDB id, so a long-running series only ever prompts once â€”
   // every subsequent episode reuses the confirmed show id.
   //
   // `season` is folded into the key (as ":sN") for TV so a confirmation made
-  // while watching one season never gets reused to resolve another — some
+  // while watching one season never gets reused to resolve another â€” some
   // provider catalogs (e.g. GogoAnime) give every season its own separate
   // slug, so a show-level-only key would silently pin every season to
   // whichever one the user happened to confirm first. Pass `null`/omit for
@@ -298,7 +302,7 @@ export const storage = {
   },
 
   // Client-side cache for streamScraper.js's listAvailableEpisodes, keyed
-  // the same way as confirmedShowId (including the season fold-in — an
+  // the same way as confirmedShowId (including the season fold-in â€” an
   // available-episode list is for one season's slug, not the whole show).
   // TTL because new episodes do get dubbed/added over time.
   getEpisodeAvailability(providerId, tmdbId, season = null) {
@@ -336,3 +340,4 @@ export const storage = {
     localStorage.clear();
   }
 };
+
