@@ -1,12 +1,10 @@
 {
   "name": "t2",
-  "appName": "TFlix T2",
-  "version": "2.0.9",
-  "description": "TFlix is a 10-foot streaming web app for Samsung Smart TVs running TizenBrew, featuring TMDB discovery and multi-embed streaming.",
-  "packageType": "app",
-  "appPath": "dist/index.html",
-  "main": "dist/index.html",
-  "serviceFile": "service/hlsRelay.js",
+  "appName": "Soap2Day TV Navigation",
+  "version": "2.1.0",
+  "description": "Soap2Day website module with directional remote navigation for Samsung Smart TVs.",
+  "packageType": "mods",
+  "main": "tv-navigation.js",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -28,12 +26,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/TreborNamor/t2"
+    "url": "https://github.com/TreborNamor/t"
   },
   "bugs": {
-    "url": "https://github.com/TreborNamor/t2/issues"
+    "url": "https://github.com/TreborNamor/t/issues"
   },
-  "homepage": "https://github.com/TreborNamor/t2#readme",
+  "homepage": "https://github.com/TreborNamor/t#readme",
   "keywords": [
     "tizenbrew",
     "tizen",
@@ -53,5 +51,7 @@
   "dependencies": {
     "hls.js": "^1.7.1",
     "qrcode": "^1.5.4"
-  }
+  },
+  "websiteURL": "https://ww25.soap2day.day/movies-qfva3/",
+  "evaluateScriptOnDocumentStart": false
 }
